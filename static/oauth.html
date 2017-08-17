@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="application/javascript"
+            src="./angular.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+
+
+<div ng-app="myApp" ng-init="init()" ng-controller="namesCtrl">
+    <img src="{{ init_data.qrcode_url_path }}"> <br>
+    image url : {{init_data.qrcode_url_path}} <br>
+    scan url : {{init_data.qrcode_scan_url}} <br>
+    callback url : {{init_data.qrcode_callback_url}} <br>
+    click_url : {{init_data.click_url}} <br>
+    click_callback_url : {{init_data.click_callback_url}} <br>
+    当前验证状态是: {{scan_status}}<br>
+</div>
+
+<script>
+    angular.module('myApp', []).controller('namesCtrl', function ($scope, $http, $interval, $timeout) {
+        $scope.init = function () {
+            $scope.scan_status = "等待扫描";
+//            $scope.init_data = null;
+//            $scope.init_data.qrcode_url_path = "/static/1.png";
+//            $timeout(function () {
+            $http({
+                method: 'GET',
+                url: '/'
+            }).then(function successCallback(response) {
+                $scope.init_data = response.data;
+                $http({
+                    method: 'GET',
+                    url: $scope.init_data.qrcode_callback_url
+                }).then(function successCallback(response) {
+                    $scope.scan_status = response.data;
+                    $http({
+                        method: 'GET',
+                        url: $scope.init_data.click_callback_url
+                    }).then(function successCallback(response) {
+                        $scope.scan_status = response.data;
+//                            $location.path("/static/index.html");
+                        // 请求成功执行代码
+                    }, function errorCallback(response) {
+                        // 请求失败执行代码
+                    });
+                    // 请求成功执行代码
+                }, function errorCallback(response) {
+                    // 请求失败执行代码
+                });
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+            });
+//            }, 3000);
+        };
+
+//        $timeout(function () {
+//
+//        }, 2000);
+    });
+</script>
+</body>
+</html>

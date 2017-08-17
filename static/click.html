@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="application/javascript"
+            src="./angular.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+
+
+<div ng-app="myApp" ng-init="init()" ng-controller="namesCtrl">
+    <button type="button" style="width: 400px;height: 400px;font-size: 30px;size: 40px;" size="40px" ng-click="click_button()">please click the button!</button><br>
+    sid: {{sid}}<br>
+    <div ng-show="ret_show">
+        {{ret_data}}
+    </div>
+</div>
+<script>
+    angular.module('myApp', []).controller('namesCtrl', function ($scope, $http, $location) {
+        $scope.init = function () {
+//                $scope.sid = $location.search("sid");
+//                $scope.sid_1 = $location.search()
+            $scope.myUrl = $location.absUrl();
+//                $scope.sid = $scope.myUrl;
+            var list_ret = $scope.myUrl.split("sid=");
+            $scope.sid = list_ret[1];
+            $scope.ret_show = false;
+        };
+
+        $scope.click_button = function () {
+            $scope.ret_data = "正在验证中！"
+            $scope.ret_show = true;
+            $http({
+                method: 'GET',
+                url: '/click/' + $scope.sid
+            }).then(function successCallback(response) {
+                $scope.ret_data = response.data;
+            }, function errorCallback(response) {
+                // 请求失败执行代码
+            });
+        }
+
+    });
+</script>
+</body>
+</html>
